@@ -45,7 +45,8 @@ const readline = require('readline').createInterface({
 
 function mostrarMenu(){
     console.log("1. Agregar pedido")
-    console.log("2. Salir")
+    console.log("2. Listar mi pedido")
+    console.log("3. Salir")
     readline.question("Seleccione una opción: ", opcion => {
         if(opcion === "1"){
             console.table(productos)
@@ -55,10 +56,14 @@ function mostrarMenu(){
                     calcularTotal()
                     console.log("Pedido agregado. Total actual: $" + total)
                     mostrarMenu()
-                }
-            )})
+                })
+            })
         } else if(opcion === "2"){
-            console.log("Gracias por su compra. Total a pagar: $" + total)
+            console.table(pedidos)
+            console.log("Total a pagar: $" + total)
+            mostrarMenu()
+        } else if(opcion === "3"){
+            console.log("Gracias por su compra.")
             readline.close()
         } else {
             console.log("Opción no válida. Intente de nuevo.")
