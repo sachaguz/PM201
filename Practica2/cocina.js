@@ -1,14 +1,9 @@
+const { productos } = require('./datos')
+
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 })
-
-let productos = [
-    { nombre: "Coca Cola", precio: 20 },
-    { nombre: "Pepsi", precio: 18 },
-    { nombre: "Fanta", precio: 22 },
-    { nombre: "Sprite", precio: 19 }
-]
 
 function mostrarMenu() {
     console.log("1. Listar productos")
