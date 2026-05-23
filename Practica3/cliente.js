@@ -1,5 +1,6 @@
-const { productos, pedidos } = require('./datos')
+const { productos, pedidos, readline } = require('./datos')
 
+let subtotal = 0
 let total = 0
 
 function agregarPedido(nombre, cantidad) {
@@ -7,28 +8,25 @@ function agregarPedido(nombre, cantidad) {
 }
 
 function calcularSubtotal() {
-    total = 0
+    subtotal = 0
     for (let pedido of pedidos) {
         let producto = productos.find(p => p.nombre === pedido.nombre)
         if (producto) {
             pedido.total = producto.precio * pedido.cantidad
-            total += pedido.total
+            subtotal += pedido.total
         } else {
             console.log("Producto no encontrado: " + pedido.nombre)
         }
     }
-    total = total * 1.16
+    total = subtotal * 1.16
 }
 
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-function mostrarMenu() {
+function mostrarMenuCliente(volver) {
+    console.log("--- Menú Cliente ---")
     console.log("1. Agregar pedido")
     console.log("2. Listar mi pedido")
-    console.log("3. Salir")
+    console.log("3. Promociones")
+    console.log("4. Volver al menú principal")
     readline.question("Seleccione una opción: ", opcion => {
         if (opcion === "1") {
             console.table(productos)
@@ -39,40 +37,48 @@ function mostrarMenu() {
                         if (filtrados.length > 0) {
                             console.table(filtrados)
                             readline.question("Ingrese el nombre del producto: ", nombre => {
-                            readline.question("Ingrese la cantidad: ", cantidad => {
-                            agregarPedido(nombre, parseInt(cantidad))
-                            calcularSubtotal()
-                            console.log("Pedido agregado. Total actual: $" + total)
-                            mostrarMenu()
+                                readline.question("Ingrese la cantidad: ", cantidad => {
+                                    agregarPedido(nombre, parseInt(cantidad))
+                                    calcularSubtotal()
+                                    console.log("Pedido agregado.")
+                                    console.log("Subtotal: $" + subtotal)
+                                    console.log("Total: $" + total)
+                                    mostrarMenuCliente(volver)
+                                })
                             })
-                    })
                         } else {
                             console.log("No se encontraron productos del tipo: " + tipo)
+                            mostrarMenuCliente(volver)
                         }
                     })
-                    
-                } else {    
+                } else {
                     readline.question("Ingrese la cantidad: ", cantidad => {
                         agregarPedido(nombre, parseInt(cantidad))
                         calcularSubtotal()
-                        console.log("Pedido agregado. Total actual: $" + total)
-                        mostrarMenu()
+                        console.log("Pedido agregado.")
+                        console.log("Subtotal: $" + subtotal)
+                        console.log("Total: $" + total)
+                        mostrarMenuCliente(volver)
                     })
-                    }
+                }
             })
         } else if (opcion === "2") {
             console.table(pedidos)
             calcularSubtotal()
+            console.log("Subtotal: $" + subtotal)
             console.log("Total a pagar: $" + total)
-            mostrarMenu()
+            mostrarMenuCliente(volver)
         } else if (opcion === "3") {
-            console.log("Gracias por su compra.")
-            readline.close()
+            let filtrados = productos.filter(p => p.promocion === "En promoción")
+            console.table(filtrados)
+            mostrarMenuCliente(volver)
+        } else if (opcion === "4") {
+            volver()
         } else {
             console.log("Opción no válida. Intente de nuevo.")
-            mostrarMenu()
+            mostrarMenuCliente(volver)
         }
     })
 }
 
-mostrarMenu()
+module.exports = mostrarMenuCliente
