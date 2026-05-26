@@ -105,4 +105,34 @@ function mostrarMenuCocina(volver) {
     })
 }
 
+// ============================================================
+// NUEVO: PROMESAS
+// Cocina prepara un pedido y devuelve una Promise.
+// Por defecto resuelve (éxito). Para forzar un fallo en la
+// próxima preparación se cambia "modoCocina".
+// ============================================================
+let modoCocina = "exito" // exito | error | ingrediente
+
+function setModoCocina(modo) {
+    modoCocina = modo
+}
+
+function prepararEnCocina(idPedido) {
+    return new Promise((resolve, reject) => {
+        console.log("Cocina: recibido pedido #" + idPedido + ", preparando...")
+        setTimeout(() => {
+            if (modoCocina === "exito") {
+                resolve("Pedido preparado correctamente")
+            } else if (modoCocina === "error") {
+                reject("Error en cocina")
+            } else if (modoCocina === "ingrediente") {
+                reject("Falta ingrediente")
+            }
+            modoCocina = "exito" // se resetea después de cada pedido
+        }, 2000)
+    })
+}
+
 module.exports = mostrarMenuCocina
+module.exports.prepararEnCocina = prepararEnCocina
+module.exports.setModoCocina = setModoCocina

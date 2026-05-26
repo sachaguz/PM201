@@ -1,21 +1,18 @@
 const { productos, pedidos, readline } = require('./datos')
+const { prepararEnCocina } = require('./cocina')
 
 let subtotal = 0
 let total = 0
 let idPedido = 1
 
 function agregarPedido(nombre, cantidad) {
-    /* Asignar todos los productos a un mismo pedido hasta seleccionar finalizar pedido */
-    
     pedidos.push({ idPedido: idPedido, nombre, cantidad , status: "En carrito"})
 }
 
 function calcularSubtotal() {
-    /* Calcular el subtotal sumando el total de cada producto que pertenezca al mismo idPedido, luego calcular el total sumando el IVA */
     subtotal = 0
     filtrarPedidos = pedidos.filter(p => p.idPedido === idPedido)
     for (let pedido of filtrarPedidos) {
-        
         let producto = productos.find(p => p.nombre === pedido.nombre && idPedido === pedido.idPedido)
         if (producto) {
             pedido.total = producto.precio * pedido.cantidad
@@ -23,22 +20,53 @@ function calcularSubtotal() {
         } else {
             console.log("Producto no encontrado: " + pedido.nombre)
         }
-
-        
     }
     total = subtotal * 1.16
+}
 
-    /*subtotal = 0
-    for (let pedido of pedidos) {
-        let producto = productos.find(p => p.nombre === pedido.nombre)
-        if (producto) {
-            pedido.total = producto.precio * pedido.cantidad
-            subtotal += pedido.total
-        } else {
-            console.log("Producto no encontrado: " + pedido.nombre)
-        }
+// ============================================================
+// NUEVO: setTimeout + ASINCRONÍA
+// Pequeño helper para esperar usando setTimeout dentro de una Promise.
+// Sirve para mostrar los estados con delay entre cada uno.
+// ============================================================
+function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// Procesa el pedido mostrando estados intermedios.
+// Llama al callback correspondiente de caja al terminar.
+async function procesarPedido(idActual, onListo, onCancelado) {
+    let misPedidos = pedidos.filter(p => p.idPedido === idActual)
+
+    // Estado 1: Pedido recibido
+    misPedidos.forEach(p => p.status = "Pedido recibido")
+    console.log("Estado: Pedido recibido")
+    await esperar(1500)
+
+    // Estado 2: Preparando (cocina entra con su Promesa)
+    misPedidos.forEach(p => p.status = "Preparando...")
+    console.log("Estado: Preparando...")
+
+    try {
+        const respuesta = await prepararEnCocina(idActual)
+        console.log("Cocina: " + respuesta)
+
+        // Estado 3: Empacando
+        misPedidos.forEach(p => p.status = "Empacando...")
+        console.log("Estado: Empacando...")
+        await esperar(1500)
+
+        // Estado 4a: Entregado → callback de caja
+        misPedidos.forEach(p => p.status = "Pedido Entregado")
+        console.log("Estado: Pedido Entregado")
+        onListo(idActual)
+
+    } catch (error) {
+        // Estado 4b: Cancelado → callback de caja
+        misPedidos.forEach(p => p.status = "Cancelado")
+        console.log("Estado: Cancelado (" + error + ")")
+        onCancelado(idActual, error)
     }
-    total = subtotal * 1.16*/
 }
 
 function mostrarMenuCliente(volver) {
@@ -99,12 +127,16 @@ function mostrarMenuCliente(volver) {
             console.log("Pedido finalizado.")
             console.log("Subtotal: $" + subtotal)
             console.log("Total a pagar: $" + total)
-            let misPedidos = pedidos.filter(p => p.idPedido === idPedido)
-            for (let pedido of misPedidos) {
-                pedido.status = "Pedido recibido"
-            }
+
+            // NUEVO: procesamos el pedido con estados asíncronos
+            // y callbacks hacia caja.
+            const { onPedidoListo, onPedidoCancelado } = require('./caja')
+            const idActual = idPedido
             idPedido++
-            mostrarMenuCliente(volver)
+            procesarPedido(idActual, onPedidoListo, onPedidoCancelado).then(() => {
+                mostrarMenuCliente(volver)
+            })
+
         } else if (opcion === "5") {
             volver()
         } else {
