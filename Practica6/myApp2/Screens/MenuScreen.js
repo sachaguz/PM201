@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import React,{useState} from 'react';
 import TarjetasScreen from './TarjetasScreen';
 import Componente1 from './Componente1';
+import PracticaGena from './PracticaGena';
 
 
 
@@ -17,12 +18,15 @@ export default function App() {
             return <TarjetasScreen/>;
         case 'componente1':
             return <Componente1/>;
+        case 'PracticaGena':
+            return <PracticaGena/>;
         case 'menu':
             default:
                 return (
                     <View>
                         <Text>Aqui va la primer practica de componentes nativos</Text>
                         <Button title="Practica tarejtas" onPress={()=>setScreen('tarjetas')}/>
+                        <Button title="Practica Equipo Genaro" onPress={()=>setScreen('PracticaGena')}/>
                         <Button title="Practica Componente1" onPress={()=>setScreen('componente1')}/>
                     </View>
                 );

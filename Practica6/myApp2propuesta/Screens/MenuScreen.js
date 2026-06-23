@@ -23,6 +23,7 @@ export default function App() {
                     <View>
                         <Text>Aqui va la primer practica de componentes nativos</Text>
                         <Button title="Practica tarejtas" onPress={()=>setScreen('tarjetas')}/>
+                        <Button title="Practica Componente1" onPress={()=>setScreen('PracticaGena')}/>
                         <Button title="Practica Componente1" onPress={()=>setScreen('componente1')}/>
                     </View>
                 );
