@@ -8,6 +8,8 @@ import Componente1 from './Componente1';
 import PracticaGena from './PracticaGena';
 import PressableScreen from './PressableScreen';
 import SwitchScreen from './SwitchScreen';
+import { TextInputScreen } from './TextInputScreen';
+import ComponenteAlert from './ComponenteAlerta';
 
 
 
@@ -26,16 +28,22 @@ export default function App() {
             return <SwitchScreen/>
         case 'PressableScreen':
             return <PressableScreen/>
+        case 'TextInputScreen':
+            return <TextInputScreen/>
+        case 'ComponenteAlert':
+            return <ComponenteAlert/>
         case 'menu':
             default:
                 return (
                     <View>
                         <Text>Aqui va la primer practica de componentes nativos</Text>
-                        <Button title="Practica tarejtas" onPress={()=>setScreen('tarjetas')}/>
+                        <Button title="Practica tarjetas" onPress={()=>setScreen('tarjetas')}/>
                         <Button title="Practica Equipo Genaro" onPress={()=>setScreen('PracticaGena')}/>
                         <Button title="Practica Componente1" onPress={()=>setScreen('componente1')}/>
                         <Button title="Pressable" onPress={()=>setScreen('PressableScreen')}/>
                         <Button title="Switch" onPress={()=>setScreen('SwitchScreen')}/>
+                        <Button title="Practica TextInput" onPress={()=>setScreen('TextInputScreen')}/>
+                        <Button title="Alerta" onPress={()=>setScreen('ComponenteAlert')}/>
                     </View>
                 );
     }
