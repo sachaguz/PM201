@@ -15,6 +15,8 @@ import SectionListScreen from './SectionListScreen';
 import { ImagenFondo } from './ImagenFondo';
 import { SplashScreen } from './SplashScreen';
 import { Home } from './Home';
+import ComponentesNativos from './ComponentesNativos';
+
 
 
 /* Zona 2: Main - Componentes  */
@@ -56,6 +58,8 @@ export default function App() {
             return <SplashScreen/>
         case 'home':
             return <Home/>
+        case 'componentesNativos':
+            return <ComponentesNativos/>
         case 'menu':
             default:
                 return (
@@ -73,6 +77,7 @@ export default function App() {
                         <Button title="Imagen de Fondo" onPress={()=>setScreen('ImagenFondo')}/>
                         <Button title="SplashScreen" onPress={()=>setScreen('splashScreen')}/>
                         <Button title="Home" onPress={()=>setScreen('home')}/>
+                        <Button title="ActivityIndicator y KeyboardAvoidingView" onPress={()=>setScreen('componentesNativos')}/>
                     </View>
                 );
     }
